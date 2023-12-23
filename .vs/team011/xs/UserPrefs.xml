@@ -1,0 +1,35 @@
+﻿<Properties StartupConfiguration="{98BCB2B4-A5E7-4AF8-A2C9-8311F46A5D7C}|Default">
+  <MonoDevelop.Ide.ItemProperties.team011 PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Helper/ConnectionHelper.cs">
+    <Files>
+      <File FileName="Helper/ConnectionHelper.cs" Line="11" Column="159" />
+      <File FileName="Program.cs" />
+      <File FileName="Views/Report/MonthlySaleReport.cshtml" />
+      <File FileName="Views/Report/GrossCustomerIncomeReport.cshtml" />
+      <File FileName="Controllers/ReportController.cs" />
+      <File FileName="Models/MonthlySalesReport.cs" />
+      <File FileName="Views/Report/MonthlyTopSalesReport.cshtml" />
+      <File FileName="Models/MonthlyTopSalesReport.cs" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="team011" expanded="True">
+            <Node name="team011" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Helper" expanded="True">
+                <Node name="ConnectionHelper.cs" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

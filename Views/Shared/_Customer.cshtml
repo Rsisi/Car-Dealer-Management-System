@@ -1,0 +1,194 @@
+﻿@model team011.Models.Customer
+@ViewBag.customer
+@using Microsoft.AspNetCore.Http;
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="container">
+    <div>
+        <h6 id="DL">Customer Driver's License:</h6>
+        <h6 id="TaxID">Customer TaxID:</h6>
+        <form id="customerForm" name="customerForm" class="customer">
+            <div class="form-group row">
+                <div class="col-sm-10" style="display:inline-flex">
+
+                    <input type="text" id="txtCustomerID" placeholder="Enter Customer ID Here" class="form-control" required/>
+                    <span class="error" style="color:red; display:none">*</span>
+
+                </div>
+
+                <div class="col-sm-2">
+                    <input id="btnsearchcustomer" type="submit" style="bottom:0" class="btn btn-info" value="Search" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"></div>
+                <div class="col">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="customerType" id="radioIndividual" value="individual" required>
+                        <label class="form-check-label" for="radioIndividual">Individual</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="customerType" id="radioBusiness" value="business">
+                        <label class="form-check-label" for="radioBusiness">Business</label>
+                    </div>
+
+                </div>
+
+                <div class="col"></div>
+            </div>
+            <div id="response"></div>
+            <div id="responseform">
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>Customer Name:</label>
+                        <div>
+                            <input type="text" class="form-control" id="ReturnedName" disabled />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label>Phone Number:</label>
+                        <div>
+                            <input type="text" class="form-control" id="ReturnedPhoneNumber" disabled />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col">
+                        <label>Street:</label>
+                        <div>
+                            <input type="text" class="form-control" id="ReturnedStreet" disabled />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-sm-4">
+                        <label>City:</label>
+                        <div>
+                            <input type="text" class="form-control" id="ReturnedCity" disabled />
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label>State:</label>
+                        <div>
+                            <input type="text" class="form-control" id="ReturnedState" disabled />
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label>Postal Code:</label>
+                        <div>
+                            <input type="text" class="form-control" id="ReturnedPostalCode" disabled />
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="form-group row">
+                <div class="col">
+                    <a href="@Url.Action("AddCustomerForm","Customer")" id="addCustomerbtn">
+                        <input id="addCustomerbtn" type="button" class="btn btn-primary" value="Add Customer" />
+                    </a>
+                </div>
+
+            </div>
+
+            <div id="customerInfo">
+                <p id="text">Customer id:</p>
+                <p id="ReturnedCustomerID"></p>
+                <p id="ReturnedCustomerName"></p>
+            </div>
+
+
+        </form>
+        <hr />
+    </div>
+
+
+</div>
+<script>
+
+
+
+    $(function () {
+
+        $("#addCustomerbtn").hide();
+        $("#customerInfo").hide();
+        $("#TaxID").hide();
+        $("#response").hide();
+        $("#responseform").hide();
+
+        $("#radioIndividual").on("change", function () {
+            $("#DL").show();
+            $("#TaxID").hide();
+        });
+
+        $("#radioBusiness").on("change", function () {
+            $("#DL").hide();
+            $("#TaxID").show();
+        });
+
+        var id = -1;
+
+        $("#customerForm").submit(function (e) {
+            
+
+            e.preventDefault();
+            var customer_ID = $("#txtCustomerID").val();
+            var isIndividual = document.getElementById('radioIndividual').checked;
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("getCustomer", "Customer")',
+                data: { "CustomerID": customer_ID, "isIndividual": isIndividual},
+                success: function (response) {
+                    if (response.customerID != -1) {
+                        
+                        $("#responseform").show();
+                        document.getElementById("ReturnedCustomerID").innerHTML = response.customerID;
+                       
+                        document.getElementById("ReturnedCustomerName").innerHTML = response.customerName;
+                        document.getElementById("ReturnedName").value = response.customerName;
+
+                        document.getElementById("ReturnedPhoneNumber").value = response.phone_number;
+                        document.getElementById("ReturnedStreet").value = response.street_address;
+                        document.getElementById("ReturnedCity").value = response.city;
+                        document.getElementById("ReturnedState").value = response.state;
+                        document.getElementById("ReturnedPostalCode").value = response.postal_code;
+
+
+                        $('#showSelectBtn').show();
+                        $("#response").hide();
+                        $("#addCustomerbtn").hide();
+
+                    }
+                    else {
+                        document.getElementById("response").innerHTML = "Customer does not exist.";
+                        document.getElementById("customerName").value = "";
+                        $("#addCustomerbtn").show();
+                        $("#response").show();
+                        $("#responseform").hide();
+                        $('#showSelectBtn').hide();
+
+
+                    }
+                }
+            })
+        });
+
+    });
+
+
+</script>

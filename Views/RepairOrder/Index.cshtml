@@ -1,0 +1,953 @@
+﻿
+@{
+    var allCustomers = ViewBag.allcustomers as SelectList;
+    var currentUserRole = HttpContextAccessor.HttpContext.Session.GetString("loggedUserRole") as string;
+    //var currentUserName = HttpContextAccessor.HttpContext.Session.GetString("loggedUserName") as string;
+}
+@using Microsoft.AspNetCore.Http;
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="container">
+    <div>
+        <form id="vinForm" class="vin ">
+            <div class="form-group row">
+                <div class="col-sm-10">
+
+                    <input type="text" id="txtvin" placeholder="Enter VIN Here"
+                           class="form-control" required value="" />
+                    <span class="error" style="color:red; display:none">*</span>
+                    @*<span class="errortext" style="color:red; display:none">The vehicle is not in our system</span>*@
+                    <small id="loginError" class="form-text text-muted errortext" style="display:none">This vehicle is not sold by us</small>
+                </div>
+
+                <div class="col-sm-2">
+                    <input type="button" style="bottom:0" class="btn btn-primary" id="btnsearchvehicle" value="Search" />
+                </div>
+
+            </div>
+        </form>
+
+
+    </div>
+    <div id="vehiclerepairs" class="card card-body bg-light">
+
+
+        <form id="openRepairOrderForm" class="row justify-content-md-center" style="display:none">
+            <div class="col-sm-12">
+                <h5>Vehicle Detials</h5>
+                <div class="form-group row ">
+
+                    <div class="col-sm-6">
+
+                        <label>
+                            VIN:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtVIN" />
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <label>
+                            Vehicle Type:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtType" />
+
+                        </div>
+
+
+                    </div>
+
+
+
+                </div>
+                <div class="form-group row ">
+                    <div class="col-sm-6">
+
+                        <label>
+                            Model Name:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtModel" />
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <label>
+                            Model Year:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtYear" />
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+                <div class="form-group row ">
+
+                    <div class="col-sm-6">
+
+                        <label>
+                            Manufacturer:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtManufacturer" />
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <label>
+                            Color(s):
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtColor" />
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <h5>Repair Details</h5>
+                <div class="form-group row ">
+
+
+                    <div class="col-sm-6">
+
+                        <label>
+                            Customer Name
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtcustomerName" />
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <label>
+                            Service Writer
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtserviceWriter" />
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+                <div class="form-group row ">
+
+                    <div class="col-sm-6">
+
+                        <label>
+                            Start Date:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtstartdate" />
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <label>
+                            Odometer Value:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control intnumber " type="number" min="0"
+                                   @*oninput="this.value =!!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"*@
+                                   disabled id="txtOdometer" />
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div class="form-group row ">
+
+                    <div class="col-sm-12">
+
+                        <label>
+                            Labor Charge:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control price" type="number" step="0.01" id="txtlaborcharge" />
+                            <span id="laborchargeerror" style="color:red; display:none">You cannot enter value less than previous value</span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="form-group row ">
+                    <div class="col-sm-12">
+                        <label>Description:</label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Description" />*@
+                        <div>
+                            <textarea class="form-control" id="txtdescription"></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <h5>Parts</h5>
+                <div class="form-group row " id="partsDetail">
+
+                    <div class="col-sm-12">
+
+
+                        <table id="tblParts" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>P/N</th>
+                                    <th>Quantity</th>
+                                    <th>Vendor</th>
+                                    <th>Price</th>
+                                    @*<th></th>*@
+
+                                </tr>
+                            </thead>
+
+
+
+                        </table>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-sm-12  justify-content-md-center">
+
+                <label>
+                    Total Charge:
+                </label>
+
+                <div>
+                    <input type="number" class="form-control" readonly id="txttotalcharge" />
+                </div>
+
+            </div>
+
+
+
+
+            <div>
+                <input type="submit" id="btnupdate" class="btn btn-primary" value="Update Repair" />
+
+                <input type="button" class="btn btn-success" id="benCompleteRepair" value="Complete Repair" />
+            </div>
+        </form>
+
+
+
+        <div id="createNewRepairForm" style="display:none">
+            <div class="col-sm-12">
+                <h5>Vehicle Detials</h5>
+                <div class="form-group row ">
+
+                    <div class="col-sm-6">
+
+                        <label>
+                            VIN:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtvVIN" />
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <label>
+                            Vehicle Type:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtvType" />
+
+                        </div>
+
+
+                    </div>
+
+
+
+                </div>
+                <div class="form-group row ">
+                    <div class="col-sm-6">
+
+                        <label>
+                            Model Name:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtvModel" />
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <label>
+                            Model Year:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtvYear" />
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+                <div class="form-group row ">
+
+                    <div class="col-sm-6">
+
+                        <label>
+                            Manufacturer:
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtvManufacturer" />
+
+                        </div>
+
+
+                    </div>
+                    <div class="col-sm-6">
+
+                        <label>
+                            Color(s):
+                        </label>
+                        @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Labor Charge" />*@
+                        <div>
+                            <input class="form-control" disabled id="txtvColor" />
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col">
+                <h5>New Repair</h5>
+            </div>
+            
+            <partial name="_Customer" />
+            <div class="col" id="showSelectBtn">
+                <input type="button" id="btnSelectCustomer" class="btn btn-info" value="Select Customer" />
+            </div>
+
+            <div class="form-group row">
+
+            </div>
+
+
+            <form id="newRepairForm">
+
+                <div class="col-sm-12">
+
+
+                    <div class="form-group row ">
+
+                        <div class="col-sm-6">
+                            <label>
+                                Customer Selected:
+                            </label>
+                            <div>
+                                <input class="form-control " value="" id="customerID" style="display:none" />
+                                <input id="customerName" class="form-control " readonly  />
+                            </div>
+
+
+                        </div>
+                        <div class="col-sm-6">
+
+                            <label>
+                                Odometer Value:
+                            </label>
+
+                            <div>
+                                <input id="txtOdometerValue" type="number" step="1" min="0"
+                                       @*oninput="this.value =!!this.value && Math.abs(this.value) >= 0 ? Math.abs(this.value) : null"*@
+                                       required class="form-control intnumber" />
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="form-group row ">
+                        <div class="col-sm-12">
+                            <label>Description:</label>
+                            @*<input type="button" class="btn btn-sm btn-primary" style="float:right" value="Update Description" />*@
+                            <div>
+                                <textarea class="form-control" id="txtnewrepairdescription"></textarea>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="form-group row ">
+                        <div class="col-sm-12">
+                            <div>
+                                <input type="submit" form="newRepairForm" class="btn btn-success" id="btnNewRepair" value="Create Repair Order" />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+
+
+
+    </div>
+
+  
+</div>
+
+
+<script>
+
+
+    parttable = $('#tblParts').DataTable()
+
+    var laborcharge, description, VIN, startdate, addpartIndex = 0, addpartIndexArray = [];
+    $(document).ready(function () {
+        $.noConflict();
+
+        $("#showSelectBtn").hide();
+
+        
+        @*$('#btnsearchcustomer').on('click', function (e) {
+            var returnMessage = document.getElementById("response").innerHTML;
+            console.log(returnMessage);
+            if (returnMessage == "Customer exists.") {
+                $('#showSelectBtn').show();
+            }
+        });*@
+
+        $('#btnsearchvehicle').on('click', function () {
+            vin = $('#txtvin').val()
+            console.log(vin)
+            if (vin != null && vin != '') {
+                searchbyVin(vin)
+                $('.error').hide()
+
+            }
+            else {
+                $('.error').show()
+            }
+        });
+
+        @*$("#response").change(function () {
+            var returnMessage = document.getElementById("response").innerHTML;
+            console.log(returnMessage);
+            if (returnMessage == "Customer exists.") {
+                $('#showSelectBtn').show();
+            }
+        });*@
+
+        var returnedCustomerID = -1;
+        $('#btnSelectCustomer').on('click', function (e) {
+            returnedCustomerID = document.getElementById("ReturnedCustomerID").innerHTML;
+            ReturnedCustomerName = document.getElementById("ReturnedCustomerName").innerHTML;
+            //document.getElementById("customerName").value = returnedCustomerID;
+
+            document.getElementById("customerID").value = returnedCustomerID;
+            document.getElementById("customerName").value = ReturnedCustomerName;
+           
+        });
+
+
+        //submit update repair order form
+
+        $('#openRepairOrderForm').submit(function (e) {
+        @*$('#btnupdate').on('click', function (e) {*@
+            e.preventDefault();
+            var currentUserrole = '@currentUserRole'
+            updatedLaborcharge = $('#txtlaborcharge').val()
+            updateDecription = $('#txtdescription').val()
+            
+            var newPartArray = [];
+            console.log(addpartIndexArray)
+            for (let i = 0; i < addpartIndexArray.length; i++) {
+
+                newPartArray.push({
+                    VIN: VIN,
+                    start_date: startdate,
+                    part_number: $("#txtPN_" + addpartIndexArray[i]).val(),
+                    quantity: $("#txtQuantity_" + addpartIndexArray[i]).val(),
+                    vendor: $("#txtVendor_" + addpartIndexArray[i]).val(),
+                    price: $("#txtPrice_" + addpartIndexArray[i]).val()
+                });
+
+            }
+            partQuantityArray = []
+            //update quantity
+            $('.newQuantity').each(function (index) {
+                var pnumber = $(this).parent().prev('td').text()
+                var newQuantity = $(this).val()
+                partQuantityArray.push({
+                    VIN: VIN,
+                    start_date: startdate,
+                    part_number: pnumber,
+                    quantity: newQuantity
+
+                });
+
+
+
+
+            })
+
+           // newPartArray.push({})
+         
+                if (currentUserrole !== 'Owner') {
+                    if (updatedLaborcharge < laborcharge) {
+                        $('#txtlaborcharge').val(laborcharge)
+                        $("#laborchargeerror").show()
+                        console.log('error')
+                        return false
+                    }
+                    else {
+                        $("#laborchargeerror").hide()
+
+                        $.when(addPart(newPartArray), updaterepairOrder(updatedLaborcharge,
+                            updateDecription, VIN, startdate),
+                            updatePartQuantity(partQuantityArray)).then(function () {
+                                alert("Repair Updated");
+                            });
+
+                    }
+                }
+                else {
+                  
+                    $.when(addPart(newPartArray), updaterepairOrder(updatedLaborcharge,
+                        updateDecription, VIN, startdate),
+                        updatePartQuantity(partQuantityArray)).then(function () {
+                            alert("Repair Updated");
+                    });
+                    @*addPart(newPartArray)
+                    updaterepairOrder(updatedLaborcharge, updateDecription, VIN, startdate)
+
+                    updatePartQuantity(partQuantityArray)*@
+
+                }
+
+        
+           
+          
+
+
+
+
+        })
+
+        //create new order form
+      //  $('#btnNewRepair').on('click', function (e) {
+        $('#newRepairForm').submit(function (e) {
+            e.preventDefault();
+
+            customer = $('#customerID').val()
+            if (customer !== '' && customer != null) {
+                odometer = $('#txtOdometerValue').val()
+                description = $('#txtnewrepairdescription').val()
+                vin = VIN
+                console.log(customer)
+                createNewRepairForm(vin, customer, odometer, description)
+
+            }
+            else {
+                alert("Please select the customer")
+            }
+           
+
+
+        })
+        //complete repair order
+        $('#benCompleteRepair').on('click', function (e) {
+            e.preventDefault();
+
+
+            completeOrder(VIN, startdate) 
+
+        })
+
+        @*$('#removerow').on('click', function (e) {
+            e.preventDefault();
+            console.log('remove')
+            console.log($(this).prev('input').prop('id'))
+
+           
+           // $(this).parent('tr').remove()
+
+
+        })*@
+
+    });
+
+    function remove(e) {
+       
+        addpartIndexArray.splice(addpartIndexArray.indexOf(addpartIndexArray.find(row => row == $(e).parents('tr').prop('id'))), 1);
+      
+      //  addpartIndexArray.splice(addpartIndexArray.indexOf($(e).parents('tr').prop('id')),1)  //.slice($(e).parents('tr').prop('id'))
+        console.log(addpartIndexArray)
+        parttable.row($(e).parents('tr'))
+            .remove()
+            .draw();
+
+      
+    }
+
+    function searchbyVin(vin) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("SearchOrderByVIN", "RepairOrder")',
+            data: {
+                'vin': vin,
+
+            },
+            success: function (response) {
+                VIN = vin
+                if (response.hasOpenOrder && response.issoldVehicle) {
+
+                        $('.errortext').hide()
+                        $('#openRepairOrderForm').show();
+                        $('#createNewRepairForm').hide()
+                        $('#txtdescription').text(response.repairOrder.description)
+                        $('#txtlaborcharge').val(response.repairOrder.labor_charge)
+                        $('#txtstartdate').val(moment(response.repairOrder.start_date).format('MM/DD/YYYY'))
+                        $('#txtserviceWriter').val(response.repairOrder.repair_starter_name)
+                        $('#txtcustomerName').val(response.repairOrder.customer_name)
+                        $('#txtType').val(response.repairOrder.vehicle_type)
+                        $('#txtModel').val(response.repairOrder.model_name)
+                        $('#txtYear').val(response.repairOrder.model_year)
+                        $('#txtVIN').val(vin)
+                        $('#txtManufacturer').val(response.repairOrder.manufacturer_name)
+                        $('#txtColor').val(response.repairOrder.colors)
+                        $('#txtOdometer').val(response.repairOrder.odometer_value)
+                        $('#txttotalcharge').val(response.repairOrder.total_cost)
+
+
+
+                        laborcharge = response.repairOrder.labor_charge
+                        description = response.repairOrder.description
+                       
+                        startdate = response.repairOrder.start_date
+                        console.log(VIN)
+                        //if has parts
+
+                        if (parttable != null) {
+                            parttable.destroy();
+
+
+                            parttable = $('#tblParts').DataTable({
+                                data: response.parts,
+                                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'B>>" +
+                                    "<'row'<'col-sm-12'tr>>" +
+                                    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                                //add addpart button
+                                buttons: [
+                                    {
+                                        text: 'Add Part',
+                                        className: "btn btn-sm btn-primary",
+                                        action: function (e, dt, node, config) {
+                                            //index = 0
+                                          
+                                            addpartIndex++
+                                            var newRowHtml = '<tr id="' + addpartIndex+'">' +
+                                                '<td> <input id="txtPN_' + addpartIndex + '" style="width:80%" required></input> </td>' +
+                                                '<td> <input type="number"  id="txtQuantity_' + addpartIndex + '"  style="width:80%" required onkeypress="validateintnumber(this)" ></input> </td>' +
+                                                '<td> <input id="txtVendor_' + addpartIndex + '" style="width:80%" required></input> </td>' +
+                                                '<td> <input type="number" step="0.01" class="price" id="txtPrice_' + addpartIndex + '" style="width:80%" required  oninput="validate2decimals(this)" ></input> <a onclick="remove(this)"><i class="far fa-trash-alt"></i></a> </td>' +
+
+                                                '</tr>'
+                                            addpartIndexArray.push(addpartIndex)
+
+                                            dt.row.add($(newRowHtml)).draw();
+                                           
+                                        }
+                                    },
+
+                                ],
+                                "autoWidth": false,
+                                columns: [
+                                    {
+                                        data: "part_number",
+                                        "width": "30%",
+
+
+                                    },
+                                    {
+                                        data: "quantity",
+                                        "width": "10%",
+                                        render: function (data, type, full, meta) {
+                                            if (full != null) {
+
+
+                                                var Html = "<a  class='xedit' onclick='fnCreateTextBox("+data+", this)'>" + data + "</a>"
+                                                return Html
+                                            }
+
+                                        }
+                                    },
+                                    {
+                                        data: "vendor",
+                                        "width": "20%"
+                                    },
+                                    {
+                                        data: "price",
+                                        "width": "20%"
+                                    },
+                                @* {
+                                data: null,
+                                render: function (data, type, full, meta) {
+                                    if (full != null) {
+                                        var btnHtml = '<button class="btn btn-primary  btn-sm" >Edit/Delete</button>'
+                                        return btnHtml
+                                    }
+
+                                }
+
+
+                            } *@
+
+                                ],
+
+                                language: {
+                                    "zeroRecords": "There is no part information available for this repair order.",
+                                },
+
+
+                            })
+                        };
+                        //float add part button to right
+
+                        $('.dt-buttons').addClass('float-right')
+                        //remove the dt-button class from add part button
+
+                        $('.dt-button').removeClass('dt-button')
+
+
+                }
+                else if (!response.hasOpenOrder && response.issoldVehicle) {
+                    console.log(response.soldVehicle)
+                    $('#txtvType').val(response.soldVehicle.vehicle_type)
+                    $('#txtvModel').val(response.soldVehicle.model_name)
+                    $('#txtvYear').val(response.soldVehicle.model_year)
+                    $('#txtvVIN').val(vin)
+                    $('#txtvManufacturer').val(response.soldVehicle.manufacturer_name)
+                    $('#txtvColor').val(response.soldVehicle.vehicle_color)
+
+                    $('#openRepairOrderForm').hide();
+                    $('#createNewRepairForm').show()
+                    $('.errortext').hide()
+                }
+                else {
+                   
+                    $('#createNewRepairForm').hide()
+                        $('.errortext').show()
+
+
+
+                        $('#openRepairOrderForm').hide();
+
+                    return false
+                    }
+
+            },
+
+
+        });
+    }
+
+
+    function fnCreateTextBox(value, el) {
+        textbox = '<input type="text"  onkeypress= "validateintnumber(this)" class="newQuantity" value="' + value + '" ></input>'
+
+        return $(el).parent().empty().append(textbox)
+
+        @*return '<input data-field="' + fieldprop + '" type="text" value="' + value + '" ></input>';*@
+    }
+
+    function updaterepairOrder(updatelabor, updateDecription,  VIN,  start_date) {
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("UpdateRepairOrder", "RepairOrder")',
+            data: {
+                'laborcharge': updatelabor, 'description': updateDecription,  'VIN': VIN,  'start_date':start_date
+            },
+            success: function (response) {
+                if (response) {
+                    laborcharge = updatelabor
+                    description = updateDecription
+
+                    addpartCount = 0
+
+                }
+
+            }
+
+
+
+        })
+
+
+    }
+
+    function addPart(partArray) {
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddPart", "RepairOrder")',
+            data: {
+                'parts': partArray
+            },
+            success: function (response) {
+                console.log(response)
+                if (response.success) {
+
+
+                    if (response.existPN.length != 0) {
+                        alert('Part exists, Please update the quantity for the following part numbers:' + response.existPN)
+                    }
+
+
+
+                    searchbyVin(VIN)
+                }
+                addpartIndex = 0
+                addpartIndexArray = []
+
+            }
+
+
+
+        })
+
+    }
+
+    function updatePartQuantity(partArray) {
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("UpdatePartQuantity", "RepairOrder")',
+            data: {
+                'parts': partArray
+            },
+            success: function (response) {
+                if (response) {
+
+                    searchbyVin(VIN)
+                }
+
+            }
+
+
+
+        })
+
+    }
+
+    function createNewRepairForm(vin, customer, odometer, description) {
+         $.ajax({
+            type: "POST",
+            url: '@Url.Action("CreateNewRepair", "RepairOrder")',
+            data: {
+                'vin': vin, 'customer': customer, 'odometer': odometer, 'description': description
+            },
+            success: function (response) {
+                if (response) {
+                    searchbyVin(vin)
+                }
+                else {
+                    alert("This vehicle has a repair order completed today, you cannot start the new repair order on the same day!")
+                }
+
+            }
+
+
+
+        })
+    }
+
+    function completeOrder(vin, start_date) {
+        $.ajax({
+        type: "POST",
+        url: '@Url.Action("CompleteRepairOrder", "RepairOrder")',
+        data: {
+            'vin': vin, 'start_date': start_date
+        },
+        success: function (response) {
+            if (response) {
+                alert("Order Completed! Redirecting to repair home page...")
+                document.location.href='@Url.Action("Index", "RepairOrder")'
+            }
+
+        }
+
+
+
+    })
+    }
+</script>

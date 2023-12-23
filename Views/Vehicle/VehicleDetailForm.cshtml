@@ -1,0 +1,284 @@
+﻿
+@{
+    Layout = "~/views/shared/_layout.cshtml";
+}
+@{
+    var vehicle = ViewBag.vehicle as Vehicle;
+    var customer = ViewBag.customer as Customer;
+    var repairHistorys = ViewBag.repairHistorys as List<RepairOrder>;
+    var userrole = @HttpContextAccessor.HttpContext.Session.GetString("loggedUserRole");
+}
+@using Microsoft.AspNetCore.Http;
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="container">
+
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <div id="VehicleInfo" class="card card-body bg-light">
+                <div class="mx-auto font-weight-bold" style="width: 200px;">
+                    Vehicle Details
+                </div>
+                <div class="row">
+                    <div class="col text-center">VIN</div>
+                    <div class="col-7 text-left">@vehicle.VIN</div>
+
+                </div>
+                <div class="row">
+                    <div class="col text-center">Manufacturer</div>
+                    <div class="col-7 text-left">@vehicle.manufacturer_name</div>
+
+                </div>
+                <div class="row">
+                    <div class="col text-center">Model Year</div>
+                    <div class="col-7 text-left">@vehicle.model_year</div>
+
+                </div>
+                <div class="row">
+                    <div class="col text-center">Model Type</div>
+                    <div class="col-7 text-left">@vehicle.model_name</div>
+
+                </div>
+                <div class="row">
+                    <div class="col text-center">Vehicle Type</div>
+                    <div class="col-7 text-left">@vehicle.vehicle_type</div>
+
+                </div>
+                @if (vehicle.vehicle_type == "Car")
+                {
+                    <div class="row">
+                        <div class="col text-center text-black-50">Number of Doors</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.number_of_doors</div>
+                    </div>
+                }
+                else if (vehicle.vehicle_type == "Convertible")
+                { <div class="row">
+                        <div class="col text-center text-black-50">roof_type</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.roof_type</div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center text-black-50">Back Seat Count</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.back_seat_count</div>
+                    </div>
+
+                }
+                else if (vehicle.vehicle_type == "Truck")
+                { <div class="row">
+                        <div class="col text-center text-black-50">Cargo_capacity</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.cargo_capacity</div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center text-black-50">Cargo_cover_type</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.cargo_cover_type</div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center text-black-50">number_of_rear_axies</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.number_of_rear_axies</div>
+                    </div>
+
+                }
+                else if (vehicle.vehicle_type == "Van")
+                { <div class="row">
+                        <div class="col text-center text-black-50">Has Driver Side Back Door</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.has_driver_side_back_door</div>
+                    </div>
+
+                }
+                else //SUV
+                { <div class="row">
+                        <div class="col text-center text-black-50">Number of Cupholders</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.number_of_cupholder</div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center text-black-50">Drivetrain Type</div>
+                        <div class="col-7 text-left text-black-50">@vehicle.drivetrain_type</div>
+                    </div>
+
+                }
+
+
+
+                <div class="row">
+                    <div class="col text-center">Vehicle Color</div>
+                    <div class="col-7 text-left">@vehicle.vehicle_color</div>
+
+                </div>
+                <div class="row">
+                    <div class="col text-center">List Price</div>
+                    <div class="col-7 text-left">@vehicle.list_price</div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col text-center">Description</div>
+                    <div class="col-7 text-left">@vehicle.description</div>
+
+                </div>
+                @if (userrole == "Owner" || userrole == "InventoryClerk" || userrole == "Manager")
+                {
+                    <div class="row">
+                        <div class="col text-center text-info">Invoice Price</div>
+                        <div class="col-7 text-left text-info">@vehicle.invoice_price</div>
+
+                    </div>
+                }
+                @if (userrole == "Owner"  || userrole == "Manager")
+                { 
+                    <div class="row">
+                        <div class="col text-center text-info">Add by Inventory Clerk</div>
+                        <div class="col-7 text-left text-info">@vehicle.first_name @vehicle.last_name </div>
+
+                    </div>
+                <div class="row">
+                    <div class="col text-center text-info">Add Date</div>
+                    <div class="col-7 text-left text-info">@vehicle.add_date.ToShortDateString()</div>
+
+                </div>
+                }
+
+
+
+            </div>
+
+        </li>
+
+        @if ((userrole == "Owner" || userrole == "Manager") && vehicle.isSold)
+        {
+            <li id="TransactionInfo" class="list-group-item">
+
+                <div class="font-weight-bold" style="width: 200px;">
+                    Transaction Info
+                </div>
+                <div class="row">
+                    <div class="col text-center">Customer address</div>
+                    <div class="col-7 text-left">@customer.street_address, @customer.city, @customer.state, @customer.postal_code  </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">Customer Email</div>
+                    <div class="col-7 text-left">@customer.email</div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">Customer Phone Number</div>
+                    <div class="col-7 text-left">@customer.phone_number</div>
+                </div>
+                @if (customer.isIndividual)
+                {
+                    <div class="row">
+                        <div class="col text-center">Customer First Name, Last Name</div>
+                        <div class="col-7 text-left"> @customer.first_name, @customer.last_name</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col text-center">Customer Contact title, Contact name, Business name</div>
+                        <div class="col-7 text-left">@customer.contact_title, @customer.contact_name, @customer.business_name</div>
+                    </div>
+
+                }
+
+
+                <div class="row">
+                    <div class="col text-center">Sold Price</div>
+                    <div class="col-7 text-left">@vehicle.sold_price</div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">Sold date</div>
+                    <div class="col-7 text-left">@vehicle.sold_date.ToShortDateString()</div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">Sales Person</div>
+                    <div class="col-7 text-left">@vehicle.sales_people_name</div>
+                </div>
+
+            </li>
+        }
+        @if ((userrole == "Owner" || userrole == "Manager") & vehicle.isSold)
+        {
+
+
+<li id="RepairHistory" class="list-group-item">
+        <div class="font-weight-bold" style="width: 200px;">
+            Repair History
+        </div>
+        @if (!vehicle.isRepaired ) {
+<p>No Repair History</p>
+        }
+        else
+        {
+        <table id="tblrepairHistomer" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>customer name</th>
+                    <th>service writer</th>
+                    <th>repair start date</th>
+                    <th>repair end date</th>
+                    <th>labor charge</th>
+                    <th>parts cost</th>
+                    <th>total cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in repairHistorys)
+                {
+                <tr>
+                    <td>
+                        @r.customer_name
+                    </td>
+                    <td>
+                        @r.repair_starter_name
+                    </td>
+                    <td>
+                        @r.start_date.ToShortDateString()
+                    </td>
+
+                    @if (@r.complete_date.Value.ToShortDateString() != "01/01/1111")
+                    {
+                        <td>
+                            @r.complete_date.Value.ToShortDateString()
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            N/A
+                        </td>
+                    }
+                    <td>
+                        @r.labor_charge
+                    </td>
+                    <td>
+                        @r.parts_cost
+                    </td>
+                    <td>
+                        @r.total_cost
+                    </td>
+                </tr>
+                }
+            </tbody>
+
+        </table>
+        }
+
+    </li>
+        }
+        @if ((userrole == "Owner" || userrole == "SalesPeople") & !vehicle.isSold)
+        {
+            <li class="list-group-item">
+                <a href="@Url.Action("CreateTransactionForm","SaleTransaction")?VIN=@vehicle.VIN">
+                    <input type="button" class="btn btn-primary" value="Sell This Vehicle" />
+
+                </a>
+            </li>
+        }
+
+    </ul>
+
+
+
+
+
+</div>
+

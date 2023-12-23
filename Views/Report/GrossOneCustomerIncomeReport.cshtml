@@ -1,0 +1,197 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var salesreport = ViewBag.GrossOneIncomeSalesReport as List<GrossOneIncomeSalesReport>;
+    var repairreport = ViewBag.GrossOneIncomeRepairReport as List<GrossOneIncomeRepairReport>;
+    var CustomerName = ViewBag.CustomerName;
+}
+<h1>Report - Gross One Customer Income</h1>
+
+
+
+<div class="btn-group mt-3">
+
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Get Reports
+    </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="/Report/ColorReport">Sales by Color</a>
+        <a class="dropdown-item" href="/Report/VehicleTypeReport">Sales by Vehicle Type</a>
+        <a class="dropdown-item" href="/Report/ManufacturerReport">Sales by Manufacturer</a>
+        <a class="dropdown-item" href="/Report/GrossCustomerIncomeReport">Gross Customer Income</a>
+        <a class="dropdown-item" href="/Report/RepairReport">Repair Reports</a>
+        <a class="dropdown-item" href="/Report/BelowCostSaleReport">Below Cost Sales</a>
+        <a class="dropdown-item" href="/Report/AverageInventoryTimeReport">View Average Inventory Time</a>
+        <a class="dropdown-item" href="/Report/PartReport">Parts Statistics</a>
+        <a class="dropdown-item" href="/Report/MonthlySaleReport">Monthly Sales</a>
+    </div>
+</div>
+
+<br>
+
+<p style="line-height:1.5em;"></p>
+
+<a href="/Report/GrossCustomerIncomeReport" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">Back to Gross Customer Income</a>
+
+<h2>Customer Name: @CustomerName</h2>
+
+<h1>Sales</h1>
+
+<div id="" style="padding-top:5px">
+    <table id="tblonecustomersales" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    Sale Date
+                </th>
+                <th>
+                    Sold Price
+                </th>
+                <th>
+                    VIN
+                </th>
+                <th>
+                    Year
+                </th>
+
+                <th>
+                    Manufacturer
+                </th>
+                <th>
+                    Model
+                </th>
+                <th>
+                    Sales Person
+                </th>
+
+            </tr>
+        </thead>
+        <tbody id="">
+            @foreach (var r in salesreport)
+            {
+
+                <tr>
+                    <td>
+                        @r.TransactionDate.ToString("MM-dd-yyyy")
+
+                    </td>
+                    <td>
+                        @r.SoldPrice
+                    </td>
+                    <td>
+                        @r.VIN
+                    </td>
+                    <td>
+                        @r.ModelYear
+                    </td>
+                    <td>
+                        @r.ManufacturerName
+                    </td>
+                    <td>
+                        @r.ModelName
+                    </td>
+                    <td>
+                        @r.FirstName
+                        @r.LastName
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+
+<h1>Repairs</h1>
+
+<div id="" style="padding-top:5px">
+    <table id="tblonecustomerrepair" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    Start Date
+                </th>
+                <th>
+                    Complete Date
+                </th>
+                <th>
+                    VIN
+                </th>
+                <th>
+                    Odometer
+                </th>
+
+                <th>
+                    Parts Cost
+                </th>
+                <th>
+                    Labor Cost
+                </th>
+                <th>
+                    Total Cost
+                </th>
+                <th>
+                    Service Writer
+                </th>
+            </tr>
+        </thead>
+        <tbody id="">
+            @foreach (var r in repairreport)
+            {
+
+            <tr>
+                <td>
+                    @r.start_date.ToString("MM-dd-yyyy")
+
+                </td>
+
+
+                @if (@r.complete_date.ToString("MM-dd-yyyy") != "01-01-1111")
+                {
+                    <td>
+                        @r.complete_date.ToString("MM-dd-yyyy")
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        N/A
+                    </td>
+                        }
+
+                    <td>
+                        @r.VIN
+                    </td>
+                    <td>
+                        @r.odometer_value
+                    </td>
+                    <td>
+                        @r.parts_cost
+                    </td>
+                    <td>
+                        @r.labor_charge
+                    </td>
+                    <td>
+                        @r.total_cost
+                    </td>
+                    <td>
+                        @r.FirstName
+                        @r.LastName
+                    </td>
+
+                </tr>
+            }
+
+
+        </tbody>
+    </table>
+
+</div>
+
+<script>
+    $('#tblonecustomerrepair').DataTable({ "order": [], "pageLength": 100 })
+    $('#tblonecustomersales').DataTable({ "order": [], "pageLength": 100 })
+</script>

@@ -1,0 +1,62 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var averageInventoryReports = ViewBag.AverageInventoryTimeReports as List<AverageInventoryTimeReport>;
+}
+<h1>Report - Average Inventory Time</h1>
+
+
+<div class="btn-group mt-3">
+
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Get Reports
+    </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="/Report/ColorReport">Sales by Color</a>
+        <a class="dropdown-item" href="/Report/VehicleTypeReport">Sales by Vehicle Type</a>
+        <a class="dropdown-item" href="/Report/ManufacturerReport">Sales by Manufacturer</a>
+        <a class="dropdown-item" href="/Report/GrossCustomerIncomeReport">Gross Customer Income</a>
+        <a class="dropdown-item" href="/Report/RepairReport">Repair Reports</a>
+        <a class="dropdown-item" href="/Report/BelowCostSaleReport">Below Cost Sales</a>
+        <a class="dropdown-item" href="/Report/AverageInventoryTimeReport">View Average Inventory Time</a>
+        <a class="dropdown-item" href="/Report/PartReport">Parts Statistics</a>
+        <a class="dropdown-item" href="/Report/MonthlySaleReport">Monthly Sales</a>
+    </div>
+</div>
+
+
+
+<div id="tblunsoldVehicles" style="padding-top:5px">
+    <table id="tblunsoldvehicles" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    Vehicle Type
+                </th>
+                <th>
+                    Average Time (Days)
+                </th>
+            </tr>
+        </thead>
+        <tbody id="unsoldvehicles">
+            @foreach (var r in averageInventoryReports)
+            {
+                <tr>
+                    <th>
+                        @r.vehicle_type
+                    </th>
+                    <td>
+                        @r.avg_day_in_inventory
+                    </td>
+                </tr>
+
+            }
+
+        </tbody>
+    </table>
+
+</div>
+
+
+<script>$('#tblunsoldvehicles').DataTable({ "order": [], "pageLength": 100} )</script>

@@ -1,0 +1,399 @@
+﻿
+@{
+    Layout = "~/views/shared/_layout.cshtml";
+    var allColors = ViewBag.allcolors as MultiSelectList;
+    var allmanufacturer = ViewBag.allmanufacturer as SelectList;
+    var alltypes = ViewBag.alltypes as SelectList;
+    var maxModelYear = ViewBag.currentYear + 1;
+    //get current date
+    var currentDate = (string)DateTime.Now.ToShortDateString();
+    var currentUsername = @HttpContextAccessor.HttpContext.Session.GetString("loggedUserName");
+
+}
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div id="AddVehicle" class="card card-body bg-light">
+    <div class="mx-auto font-weight-bold" style="width: 200px;">
+        Add Vehicle
+    </div>
+    <form id="addVehicleForm" class="feature">
+        <div class="form-group col-sm-6 ">
+
+            <label>VIN: </label>
+            <input type="text" id="txtVin" required class="form-control" maxlength="17"/>
+
+        </div>
+
+        <div class="form-group col-sm-4 ">
+            <label>Manufacturer:</label>
+            @Html.DropDownList("ddlallmanufacturer", allmanufacturer, "Select From The List", htmlAttributes: new
+       {
+           name = "ddlallmanufacturer",
+           id = "ddlallmanufacturer",
+           @class = "form-control"
+
+       })
+        </div>
+        <div class="form-group col-sm-4 ">
+            <label>Model Year: (Max as @maxModelYear)</label>
+            <input type="number" id="txtModelYear" required class="form-control" min="1800" max="@maxModelYear" />
+        </div>
+
+        <div class="form-group col-sm-4 ">
+            <label>Model Type: </label>
+            <input type="text" id="txtModelName" required class="form-control" />
+        </div>
+
+        <div class="form-group col-sm-4 ">
+            <label>Vehicle Type:</label>
+            @Html.DropDownList("ddlalltypes", alltypes, "Select From The List", htmlAttributes: new
+       {
+           name = "ddlalltypes",
+           id = "ddlalltypes",
+           @class = "form-control"
+
+       })
+        </div>
+
+        <div class="form-group col-sm-4 " id="form_car_attr">
+            <label>number of doors: </label>
+            <input type="number" id="txtnumber_of_doors"  class="form-control" min="0" />
+        </div>
+
+        <div class="form-group col-sm-4 " id="form_convertible_attr">
+            <label>roof type: </label>
+            <input type="text" id="txtroof_type"  class="form-control" />
+            <label>back seat count: </label>
+            <input type="number" id="txtback_seat_count"   class="form-control" min="0"/>
+        </div>
+
+
+        <div class="form-group col-sm-4" id="form_truck_attr">
+            <label>cargo capacity: </label>
+            <input type="number" id="txtcargo_capacity"  max="999" step="0.1" min="0" class="form-control" />
+            <label>cargo cover type (optional)</label>
+            <input type="text" id="txtcargo_cover_type" class="form-control" />
+            <label>number of rear axies: </label>
+            <input type="number" id="txtnumber_of_rear_axies" min="0" class="form-control" />
+        </div>
+
+        <div class="form-group col-sm-8 " id="form_van_attr">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="backdoorRadios" value="1" checked>
+                <label class="form-check-label" for="exampleRadios1">
+                    has driver side back door
+                </label>
+            </div>
+            <div class="form-check form-check-inline"> 
+                <input class="form-check-input" type="radio" name="backdoorRadios" value="0">
+                <label class="form-check-label" for="exampleRadios2">
+                    no driver side back door
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group col-sm-4" id="form_suv_attr">
+            <label>number of cupholder: </label>
+            <input type="number" id="txtnumber_of_cupholder"  min="0" class="form-control" />
+            <label>drivetrain type </label>
+            <input type="text" id="txtdrivetrain_type"  class="form-control" />
+        </div>
+
+        <div class="form-group col-sm-4 ">
+            <label>Vehicle Color:</label>
+            @Html.DropDownList("ddlallColors", allColors, "Select From The List", htmlAttributes: new
+       {
+           name = "ddlallColors",
+           id = "ddlallColors",
+           @class = "form-control",
+           multiple = "multiple"
+
+       })
+        </div>
+
+        <div class="form-group col-sm-4 ">
+            <label>Invoice Price </label>
+            <input type="number" id="txtInvoicePrice" required class="form-control" min="0" max="9999999.99" step="0.01" />
+        </div>
+
+        <div class="form-group col-sm-4">
+            <label>Description (optional)</label>
+            <textarea class="form-control" id="txtDescription" rows="3"></textarea>
+        </div>
+        <div class="col-sm-4">
+            Add Date: @currentDate
+        </div>
+
+        <input type="submit" class="btn btn-primary" id="btnAddVehicle" value="Add Vehicle" />
+    </form>
+
+
+</div>
+
+
+<script>
+
+    var vehicleType;
+    $(document).ready(function () {
+        $.noConflict();
+        $("#ddlalltypes").change(function () {
+            $(this).find("option:selected").each(function () {
+                var optionValue = $(this).attr("value");
+                vehicleType = optionValue;
+                switch (vehicleType) {
+                    case "Car":
+                        $('#form_car_attr').show();
+                        $('#form_convertible_attr').hide();
+                        $('#form_truck_attr').hide();
+                        $('#form_van_attr').hide();
+                        $('#form_suv_attr').hide();
+
+                        $('#txtnumber_of_doors').attr('required',true);
+
+                        $('#txtroof_type').removeAttr('required');
+                        $('#txtback_seat_count').removeAttr('required');
+
+                        $('#txtcargo_capacity').removeAttr('required');
+                        $('#txtnumber_of_rear_axies').removeAttr('required');
+
+                        $('#txtnumber_of_cupholder').removeAttr('required');
+                        $('#txtdrivetrain_type').removeAttr('required');
+                        break;
+                    case "Convertible":
+                        $('#form_car_attr').hide();
+                        $('#form_convertible_attr').show();
+                        $('#form_truck_attr').hide();
+                        $('#form_van_attr').hide();
+                        $('#form_suv_attr').hide();
+
+                        $('#txtnumber_of_doors').removeAttr('required');
+
+                        $('#txtroof_type').attr('required', true);
+                        $('#txtback_seat_count').attr('required', true);
+
+                        $('#txtcargo_capacity').removeAttr('required');
+                        $('#txtnumber_of_rear_axies').removeAttr('required');
+
+                        $('#txtnumber_of_cupholder').removeAttr('required');
+                        $('#txtdrivetrain_type').removeAttr('required');
+                        break;
+                    case "Truck":
+                        $('#form_car_attr').hide();
+                        $('#form_convertible_attr').hide();
+                        $('#form_truck_attr').show();
+                        $('#form_van_attr').hide();
+                        $('#form_suv_attr').hide();
+
+                        $('#txtnumber_of_doors').removeAttr('required');
+
+                        $('#txtroof_type').removeAttr('required');
+                        $('#txtback_seat_count').removeAttr('required');
+
+                        $('#txtcargo_capacity').attr('required', true);
+                        $('#txtnumber_of_rear_axies').attr('required', true);
+
+                        $('#txtnumber_of_cupholder').removeAttr('required');
+                        $('#txtdrivetrain_type').removeAttr('required');
+                        break;
+                    case "Van":
+                        $('#form_car_attr').hide();
+                        $('#form_convertible_attr').hide();
+                        $('#form_truck_attr').hide();
+                        $('#form_van_attr').show();
+                        $('#form_suv_attr').hide();
+
+                        $('#txtnumber_of_doors').removeAttr('required');
+
+                        $('#txtroof_type').removeAttr('required');
+                        $('#txtback_seat_count').removeAttr('required');
+
+                        $('#txtcargo_capacity').removeAttr('required');
+                        $('#txtnumber_of_rear_axies').removeAttr('required');
+
+                        $('#txtnumber_of_cupholder').removeAttr('required');
+                        $('#txtdrivetrain_type').removeAttr('required');
+                        break;
+                    case "SUV":
+                        $('#form_car_attr').hide();
+                        $('#form_convertible_attr').hide();
+                        $('#form_truck_attr').hide();
+                        $('#form_van_attr').hide();
+                        $('#form_suv_attr').show();
+
+
+                        $('#txtnumber_of_doors').removeAttr('required');
+
+                        $('#txtroof_type').removeAttr('required');
+                        $('#txtback_seat_count').removeAttr('required');
+
+                        $('#txtcargo_capacity').removeAttr('required');
+                        $('#txtnumber_of_rear_axies').removeAttr('required');
+
+                        $('#txtnumber_of_cupholder').attr('required', true);
+                        $('#txtdrivetrain_type').attr('required', true);
+                        break;
+                    default:
+                        $('#form_car_attr').hide();
+                        $('#form_convertible_attr').hide();
+                        $('#form_truck_attr').hide();
+                        $('#form_van_attr').hide();
+                        $('#form_suv_attr').hide();
+
+                        $('#txtnumber_of_doors').attr('required', true);
+                        $('#txtroof_type').attr('required', true);
+                        $('#txtback_seat_count').attr('required', true);
+                        $('#txtcargo_capacity').attr('required', true);
+                        $('#txtnumber_of_rear_axies').attr('required', true);
+                        $('#txtnumber_of_cupholder').attr('required', true);
+                        $('#txtdrivetrain_type').attr('required', true);
+
+                }
+
+
+
+            });
+        }).change();
+
+
+
+        $('#addVehicleForm').submit( function (e) {
+            e.preventDefault();
+            console.log("add vehicle butten clicked");
+            if (!$(this).hasClass('has-error')) {
+
+                var vin = $("#txtVin").val();
+                var manufacturerName = $("#ddlallmanufacturer :selected").val();
+                var modelYear = $("#txtModelYear").val();
+                var modelName = $("#txtModelName").val();
+                vehicleType = $("#ddlalltypes :selected").val();
+                var colors = $("#ddlallColors").val();
+                var invoicePrice = $("#txtInvoicePrice").val();
+                var description = $("#txtDescription").val();
+
+
+                var number_of_doors = null;
+                var roof_type = null;
+                var back_seat_count = null;
+                var cargo_capacity = null;
+                var cargo_cover_type = null;
+                var number_of_rear_axies = null;
+                var has_driver_side_back_door = null;
+                var number_of_cupholder = null;
+                var drivetrain_type = null;
+
+
+                switch (vehicleType) {
+                    case "Car":
+                        number_of_doors = $("#txtnumber_of_doors").val();
+                        break;
+                    case "Convertible":
+                        roof_type = $("#txtroof_type").val();
+                        back_seat_count = $("#txtback_seat_count").val();
+                        break;
+                    case "Truck":
+                        cargo_capacity = $("#txtcargo_capacity").val();
+                        cargo_cover_type = $("#txtcargo_cover_type").val();
+                        number_of_rear_axies = $("#txtnumber_of_rear_axies").val();
+                        break;
+                    case "Van":
+                        has_driver_side_back_door = $('#form_van_attr input[name="backdoorRadios"]:checked').val();
+                        @*console.log(has_driver_side_back_door);*@
+                        break;
+                    default:
+                        number_of_cupholder = $("#txtnumber_of_cupholder").val();
+                        drivetrain_type = $("#txtdrivetrain_type").val();
+
+
+
+                }
+
+
+                @*console.log(vin)
+                console.log(manufacturer)
+                console.log(modelYear)
+                console.log(modelType)
+                console.log(vehicleType)
+                console.log(num_of_doors)
+                console.log(colors) ['Red', 'Pink']
+                console.log(invoicePrice)
+                console.log(description)
+                console.log(description);*@
+
+
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("addVehicle", "Vehicle")',
+                    data: {
+                        "vehicle_type": vehicleType,
+                        "vin": vin,
+                        "description": description,
+                        "model_year": modelYear,
+                        "model_name": modelName,
+                        "invoice_price": invoicePrice,
+                        "manufacturer_name": manufacturerName,
+                        "inv_writer_user_name": "@currentUsername",
+                        "add_date": "@currentDate",
+                        "colors": colors,
+
+                        "number_of_doors": number_of_doors,
+
+                        "roof_type": roof_type,
+                        "back_seat_count": back_seat_count,
+
+                        "cargo_capacity": cargo_capacity,
+                        "cargo_cover_type": cargo_cover_type,
+                        "number_of_rear_axies": number_of_rear_axies,
+
+                        "has_driver_side_back_door": has_driver_side_back_door,
+
+                        "number_of_cupholder": number_of_cupholder,
+                        "drivetrain_type": drivetrain_type
+
+                    },
+                    success: function (response) {
+                        if (response) {
+
+                            console.log("success");
+                            window.location.href =  '/Vehicle/VehicleDetailForm?VIN=' + vin;;
+                        }
+                        else {
+                            alert("Add vehicle failed, please check your input")
+                            @*$("#loginError").show()*@
+
+
+                        }
+                    }
+                });
+
+
+        }
+        });
+
+
+
+
+        $('.allow_decimal').keypress(function (event) {
+            return isNumber(event, this)
+        });
+
+
+
+
+    });
+
+    function isNumber(evt, element) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+
+        if (
+
+            (charCode != 46 || $(element).val().indexOf('.') != -1) &&
+            (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }
+
+
+</script>

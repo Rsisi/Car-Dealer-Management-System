@@ -1,0 +1,503 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    // var allColors = ViewData["allcolors"] as SelectList;
+    var allColors = ViewBag.allcolors as SelectList;
+    var allmanufacturer = ViewBag.allmanufacturer as SelectList;
+    var allyear = ViewBag.allyear as SelectList;
+    var alltypes = ViewBag.alltypes as SelectList;
+    var allmodel = ViewBag.allmodel as SelectList;
+    var isSold = ViewBag.isSold as SelectList;
+    //var currentUserRole = "Anonymous";
+    var currentUserRole = HttpContextAccessor.HttpContext.Session !=null ? HttpContextAccessor.HttpContext.Session.GetString("loggedUserRole") as string : "Anonymous";
+}
+@using Microsoft.AspNetCore.Http;
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="container">
+    <div>
+
+        <div class="form-group row ">
+
+
+            <div class="col-sm-6">
+                <label>  Search Vehicle By: </label>
+                <select id="ddlsearchmethod" class="form-control col-sm-5">
+                    <option value="feature">Features</option>
+                    @if (@HttpContextAccessor.HttpContext.Session.GetString("loggedUserFullName") != null)
+                    {
+                        <option value="vin">VIN</option>
+                    }
+
+
+                </select>
+            </div>
+
+
+            <div class="col-sm-4">
+                <label style="display:block; bottom:0; right:0">Vehicles In Stock: </label> @ViewData["unsoldVehicles"]
+            </div>
+            @if (@HttpContextAccessor.HttpContext.Session.GetString("loggedUserRole") == "InventoryClerk" ||
+            @HttpContextAccessor.HttpContext.Session.GetString("loggedUserRole") == "Owner"){
+            <div class="col-sm-2">
+                <a href="@Url.Action("AddVehicleForm","Vehicle")">
+                    <input type="button" class="btn btn-primary" value="Add Vehicle" />
+
+                </a>
+
+            </div>
+            }
+
+        </div>
+
+        <div class="card card-body bg-light">
+            <form id="featureForm" class="feature">
+                <div class="form-group row">
+                    <div class="col-sm">
+                        <label>Keywords: </label>
+                        <input type="text" id="txtkeyword" placeholder="Enter Keywords Here" class="form-control" />
+
+                        <span>
+                            Case sensitive
+                            <input id="chkisCaseSensitive" type="checkbox" checked />
+                        </span>
+                    </div>
+                    @if (@HttpContextAccessor.HttpContext.Session.GetString("loggedUserRole") == "Manager" ||
+                        @HttpContextAccessor.HttpContext.Session.GetString("loggedUserRole") ==  "Owner")
+                    {
+                        <div class="col-sm-3">
+                            <label>Sold Status:</label>
+                            @Html.DropDownList("ddlisSold", isSold, htmlAttributes: new
+                       {
+                           name = "ddlisSold",
+                           id = "ddlisSold",
+                           @class = "form-control"
+
+                       })
+
+                        </div>
+                    }
+
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-3">
+                        <label>Color:</label>
+                        @Html.DropDownList("ddlallColors", allColors, "Optional", htmlAttributes: new
+                   {
+                       name = "ddlallColors",
+                       id = "ddlallColors",
+                       @class = "form-control"
+
+                   })
+
+                    </div>
+
+                    <div class="col-sm-3">
+                        <label>Manufacturer:</label>
+                        @Html.DropDownList("ddlallmanufacturer", allmanufacturer, "Optional", htmlAttributes: new
+                   {
+                       name = "ddlallmanufacturer",
+                       id = "ddlallmanufacturer",
+                       @class = "form-control"
+
+                   })
+
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Vehicle Type:</label>
+                        @Html.DropDownList("ddlalltypes", alltypes, "Optional", htmlAttributes: new
+                   {
+                       name = "ddlalltypes",
+                       id = "ddlalltypes",
+                       @class = "form-control"
+
+                   })
+
+
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Vehicle Year:</label>
+                        @Html.DropDownList("ddlallyear", allyear, "Optional", htmlAttributes: new
+                   {
+                       name = "ddlallyear",
+                       id = "ddlallyear",
+                       @class = "form-control"
+
+                   })
+
+                    </div>
+
+
+
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-4">
+                        <label>Vehicle Model:</label>
+                        @Html.DropDownList("ddlallmodel", allmodel, "Optional", htmlAttributes: new
+                   {
+                       name = "ddlallmodel",
+                       id = "ddlallmodel",
+                       @class = "form-control"
+
+                   })
+
+                    </div>
+                    <div class="col-sm-4">
+                        <label>List Price(minimum):</label>
+                        <div class="input-group">
+
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">$</span>
+                            </div>
+                            <input id="txtminprice" type="number" step="0.01" min="0" placeholder="0.00" class="form-control price">
+
+                        </div>
+
+                    </div>
+                    <div class="col-sm-4">
+                        <label>List Price(max):</label>
+                        <div class="input-group">
+
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">$</span>
+                            </div>
+                            <input id="txtmaxprice" type="number" min="0" step="0.01" placeholder="0.00" required class="form-control price">
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+            </form>
+            <form id="vinForm" class="vin ">
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <label>VIN: </label>
+                        <input type="text" id="txtvin" placeholder="Enter VIN Here" class="form-control" />
+                        <span class="error" style="color:red; display:none">*</span>
+
+                    </div>
+
+                </div>
+            </form>
+
+            <input type="button" class="btn btn-primary" id="btnsearchvehicle" value="Search" />
+
+
+        </div>
+        
+
+    </div>
+    <div id="tblunsoldVehicles" style="padding-top:5px">
+        <table id="tblunsoldvehicles" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        VIN
+                    </th>
+                    <th>
+                        Vehicle Type
+                    </th>
+                    <th>
+                        Model Year
+                    </th>
+                    <th>
+                        Model Name
+                    </th>
+                    <th>
+                        Manufacturer
+                    </th>
+                    <th>
+                        Color
+                    </th>
+                    <th>
+                        List Price
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="unsoldvehicles" >
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    var searchMethod;
+    var currentUserrole = '@currentUserRole'
+    unsoldTable = $('#tblunsoldvehicles').DataTable({
+        dom: "<'row'<'col-sm-12 col-md-12'l>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>"}
+    )
+    $(document).ready(function () {
+        $.noConflict();
+        $("#ddlsearchmethod").change(function () {
+            $(this).find("option:selected").each(function () {
+                var optionValue = $(this).attr("value");
+                searchMethod = optionValue;
+                switch (optionValue) {
+                    case "feature":
+                        $('#featureForm').show();
+                        $('#vinForm').hide();
+                        break;
+                    case "vin":
+                        $('#featureForm').hide();
+                        $('#vinForm').show();
+                        break;
+                    default:
+                        $('#featureForm').show();
+                        $('#vinForm').hide();
+                }
+
+
+
+            });
+        }).change();
+
+
+        @*$('.allow_decimal').keypress(function (event) {
+            return isNumber(event, this)
+        });*@
+
+
+        $('#btnsearchvehicle').on('click', function () {
+            if (searchMethod == 'feature') {
+                color = $('#ddlallColors :selected').val()
+                manufacture = $('#ddlallmanufacturer :selected').val()
+                type = $('#ddlalltypes :selected').val()
+                year = $('#ddlallyear :selected').val()
+                model = $('#ddlallmodel :selected').val()
+                keyword = $('#txtkeyword').val()
+                minprice = $('#txtminprice').val()
+                maxprice = $('#txtmaxprice').val()
+                iscaseSensitive = false
+                if ($('#chkisCaseSensitive').is(":checked")) {
+
+                    iscaseSensitive = true
+
+                }
+                //iscaseSensitive = $('#chkisCaseSensitive').val()
+
+                isSold = "Unsold"
+                if (currentUserrole === 'Owner' || currentUserrole === "Manager") {
+                    isSold = $('#ddlisSold :selected').val()
+                   
+                    console.log(iscaseSensitive)
+
+                  
+                }
+              
+                console.log(iscaseSensitive)
+                searchbyfeature(color, manufacture, type, year, model, keyword, isSold, minprice, maxprice, iscaseSensitive);
+
+            }
+            else {
+                vin = $('#txtvin').val()
+                console.log(vin)
+                if (vin != null && vin !='') {
+                    searchbyin(vin)
+                    $('.error').hide()
+
+                }
+                else {
+                    $('.error').show()
+                }
+
+            }
+
+
+
+        });
+
+
+    });
+
+    @*function isNumber(evt, element) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+
+        if (
+
+            (charCode != 46 || $(element).val().indexOf('.') != -1) &&
+            (charCode < 48 || charCode > 57))
+            return false;
+
+        return true;
+    }*@
+
+    function searchbyfeature(color, manufacture, type, year, model, keyword, isSold, minprice, maxprice, chkisCaseSensitive) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("searchVehicleByFeature", "Vehicle")',
+            data: {
+                'color': color,
+                'manufacture': manufacture,
+                'type': type,
+                'year': year,
+                'model': model,
+                'keyword': keyword,
+                'isSold': isSold,
+                'minprice': minprice,
+                'maxprice': maxprice,
+                'iscaseSensitive': iscaseSensitive
+            },
+            success: function (response) {
+
+
+                if (unsoldTable != null) {
+
+                    unsoldTable.destroy();
+                    unsoldTable = $('#tblunsoldvehicles').DataTable({
+                        data: response,
+                        columns: [
+                            { data: "vin"},
+                            { data: "vehicle_type" },
+                            {
+                                data: "model_year",
+                                className:"hightlightText"
+                            },
+                            {
+                                data: "model_name",
+                                className: "hightlightText"
+                            },
+                            {
+                                data: "manufacturer_name",
+                                className: "hightlightText"},
+                            { data: "vehicle_color" },
+                            { data: "list_price" },
+                            {
+                                data: "description",
+                                className: "hightlightText"
+                            },
+                            {
+                                data: null,
+                                render: function (data, type, full, meta) {
+                                    var VIN = full.vin;
+                                    var detailURL = "'" + '/Vehicle/VehicleDetailForm?VIN=' + VIN + "'";
+                                    var btnHtml = '<button class="btn btn-primary  btn-sm viewdetailclass" onclick="location.href=' + detailURL+'">View Details</button>'
+                                    return btnHtml
+                                }
+
+
+                            }
+                        ],
+                        dom: "<'row'<'col-sm-12 col-md-12'l>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        language: {
+                            "zeroRecords": "Sorry, it looks like we don'thave that in stock!",
+                        },
+                        "drawCallback": function (settings) {
+                            highlight(keyword, chkisCaseSensitive)
+                        }
+
+                    })
+
+                    
+                 
+
+                };
+
+
+
+            },
+
+
+        });
+    }
+    function searchbyin(vin) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("searchVehicleByVIN", "Vehicle")',
+            data: {
+                'vin': vin,
+
+            },
+            success: function (response) {
+                console.log(response)
+
+                if (unsoldTable != null) {
+                    unsoldTable.destroy();
+                    unsoldTable = $('#tblunsoldvehicles').DataTable({
+                        data: response,
+                        columns: [
+                            { data: "vin" },
+                            { data: "vehicle_type" },
+                            { data: "model_year" },
+                            { data: "model_name" },
+                            { data: "manufacturer_name" },
+                            { data: "vehicle_color" },
+                            { data: "list_price" },
+                            { data: "description" },
+                            {
+                                data: null,
+                                render: function (data, type, full, meta) {
+                                    var VIN = full.vin;
+                                    var detailURL = "'" + '/Vehicle/VehicleDetailForm?VIN=' + VIN + "'";
+                                    var btnHtml = '<button class="btn btn-primary  btn-sm viewdetailclass" onclick="location.href=' + detailURL + '">View Details</button>'
+                                    return btnHtml
+                                }
+
+
+                            }
+                        ],
+
+                        dom: "<'row'<'col-sm-12 col-md-12'l>>" +
+                            "<'row'<'col-sm-12'tr>>" +
+                            "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                        "language": {
+                            "zeroRecords": "Sorry, it looks like we don'thave that in stock!",
+                        }
+
+                    })
+                };
+
+
+
+            },
+
+
+        });
+    }
+  
+    function highlight(text, chkisCaseSensitive) {
+
+        var hightlights = document.getElementsByClassName("hightlightText");
+        console.log(hightlights.length)
+        for (i = 3; i < hightlights.length; i++) {
+            var innerHTML = hightlights[i].innerHTML;
+      
+            var index = 0
+            if (chkisCaseSensitive) {
+                index = innerHTML.indexOf(text);
+            }
+            else {
+                index = innerHTML.toUpperCase().indexOf(text.toUpperCase());
+            }
+          
+            if (index >= 0) {
+                
+                innerHTML = innerHTML.substring(0, index) + '<span style="background-color: yellow;">' + innerHTML.substring(index, index + text.length) + "</span>" + innerHTML.substring(index + text.length);
+                hightlights[i].innerHTML = innerHTML;
+            }
+           
+        }
+
+
+    }
+</script>

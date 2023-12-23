@@ -1,0 +1,211 @@
+﻿@model team011.Models.Customer
+@{
+    Layout = "~/views/shared/_layout.cshtml";
+}
+@ViewBag.addcustomer
+ 
+
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="container">
+    <form name="forms" class="customer" id="forms">
+        <div class="text-center">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="customerType" id="individual" value="individual" checked>
+                <label class="form-check-label" for="individual">Individual</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="customerType" id="business" value="business">
+                <label class="form-check-label" for="business">Business</label>
+            </div>
+
+        </div>
+
+        <div id="individualForm">
+            <div class="form-group">
+                <label for="driversLicense">Driver's License:</label>
+                <input type="text" class="form-control" id="driver_license" placeholder="Driver's License" >
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" class="form-control" id="first_name" placeholder="First name" >
+                </div>
+                <div class="col">
+                    <label for="lastname">Last Name:</label>
+                    <input type="text" class="form-control" id="last_name" placeholder="Last name" >
+                </div>
+            </div>
+
+        </div>
+
+        <div id="businessForm">
+            <div class="form-group">
+                <label for="taxID">Tax ID:</label>
+                <input type="text" class="form-control" id="tax_ID" placeholder="Tax ID" >
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label for="contactTitle">Contact Title:</label>
+                    <input type="text" class="form-control" id="contact_title" placeholder="Contact Title" >
+                </div>
+                <div class="col">
+                    <label for="contactName">Contact Name:</label>
+                    <input type="text" class="form-control" id="contact_name" placeholder="Contact Name" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="businessName">Business Name:</label>
+                <input type="text" class="form-control" id="business_name" placeholder="Business Name" >
+            </div>
+        </div>
+
+        <div id="commonForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" placeholder="Email">
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="number" class="form-control" id="phone_number" placeholder="Phone Number" required>
+            </div>
+            <div class="form-group">
+                <label for="streetAddress">Street Address:</label>
+                <input type="text" class="form-control" id="street_address" placeholder="Street Address" required>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <label for="city">City:</label>
+                        <input type="text" class="form-control" id="city" placeholder="City" required>
+                    </div>
+                    <div class="col">
+                        <label for="state">State:</label>
+                        <input type="text" class="form-control" id="state" placeholder="State" required>
+                    </div>
+                    <div class="col">
+                        <label for="postalCode">Postal Code:</label>
+                        <input type="number" class="form-control" id="postal_code" placeholder="Postal Code" required max="99999">
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+        <input type="submit" class="btn btn-primary" value="Add Customer" id="btnAddCustomer" />
+        <small id="addError" class="form-text text-muted" style="display:none">Added New Customer Failed</small>
+
+    </form>
+    <div id="hidden">
+        <input type="text" id="user_role" value=@HttpContextAccessor.HttpContext.Session.GetString("loggedUserName")>
+    </div>
+
+</div>
+
+<script>
+
+
+    $(function () {
+
+        $("#individualForm").show();
+        $("#businessForm").hide();
+
+
+        $("#individual").on("change", function () {
+            $("#individualForm").show();
+            $("#businessForm").hide();
+
+            $("#driver_license").attr('required', true);
+            $("#first_name").attr('required', true);
+            $("#last_name").attr('required', true);
+            $("#tax_ID").removeAttr("required");
+            $("#contact_title").removeAttr("required");
+            $("#contact_name").removeAttr("required");
+            $("#business_name").removeAttr("required");
+        });
+
+        $("#business").on("change", function () {
+            $("#individualForm").hide();
+            $("#businessForm").show();
+
+            $("#tax_ID").attr('required', true);
+            $("#contact_title").attr('required', true);
+            $("#contact_name").attr('required', true);
+            $("#business_name").attr('required', true);
+            $("#driver_license").removeAttr("required");
+            $("#first_name").removeAttr("required");
+            $("#last_name").removeAttr("required");
+
+        });
+
+        $("#hidden").hide();
+
+
+        $("#forms").submit(
+            function (e) {
+                event.preventDefault();
+
+                var isIndividual = document.getElementById('individual').checked;
+                var email = $("#email").val();
+                var phone_number = $("#phone_number").val();
+                var street_address = $("#street_address").val();
+                var city = $("#city").val();
+                var state = $("#state").val();
+                var postal_code = $("#postal_code").val();
+                var add_by_user_name = $("#user_role").val();
+
+                if (isIndividual) {
+                    var driver_license = $("#driver_license").val();
+                    var first_name = $("#first_name").val();
+                    var last_name = $("#last_name").val();
+                }
+                else {
+                    var tax_ID = $("#tax_ID").val();
+                    var contact_title = $("#contact_title").val();
+                    var contact_name = $("#contact_name").val();
+                    var business_name = $("#business_name").val();
+                }
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("addCommon", "Customer")',
+                data: {
+                    "isIndividual":isIndividual,
+                    "email": email,
+                    "phone_number": phone_number,
+                    "add_by_user_name": add_by_user_name,
+                    "street_address": street_address,
+                    "city": city,
+                    "state": state,
+                    "postal_code": postal_code,
+                    "driver_license": driver_license,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                    "tax_ID": tax_ID,
+                    "contact_title": contact_title,
+                    "contact_name": contact_name,
+                    "business_name": business_name
+                },
+                success: function (response) {
+                    if (response) {
+                        window.location.href = "@Url.Action("Index","Home")";
+                    }
+                    else {
+                        $("#addError").show();
+                    }
+                    }
+                })
+            }
+        );
+    });
+
+
+
+
+
+
+
+
+</script>

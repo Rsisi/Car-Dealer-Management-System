@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "~/views/shared/_layout.cshtml";
+}
+@using Microsoft.AspNetCore.Http;
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+
+
+
+<div class="container">
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="username">User Name</label>
+            <input class="form-control" id="username" required placeholder="Enter username">
+
+        </div>
+        <div class="form-group">
+            <label for="Password">Password</label>
+            <input type="password" class="form-control" id="password" required placeholder="Password">
+
+        </div>
+        <small id="loginError" class="form-text text-muted" style="display:none">Login Failed</small>
+
+        <input id="btnlogin" type="submit" class="btn btn-primary" value="Log In" />
+
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#loginForm').submit(function (e) {
+            e.preventDefault()
+            @*if (!$(this).hasClass('has-error')) {*@
+
+                var username = $("#username").val();
+            var password = $("#password").val();
+
+            var user = {
+                'user_name': username,
+                'password': password
+            }
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("checkUserLogin", "User")',
+                    data:user,
+                    //data: { "username": username, "password": password },
+                    success: function (response) {
+                        if (response.success == true) {
+
+                            window.location.href = "@Url.Action("Index","Home")";
+                        }
+                        else {
+                            $("#loginError").show()
+
+                        }
+                    }
+
+
+                })
+            @*}*@
+
+        });
+    });
+
+
+</script>

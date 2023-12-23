@@ -1,0 +1,155 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    var typerepairreports = ViewBag.TypeRepairReport as List<TypeRepairReport>;
+    string tempManufacturerName = ViewBag.tempManufacturerName;
+    var manufacturewithmodels = ViewBag.manufacturewithmodels as Dictionary<TypeRepairReport, List<ModelRepairReport>>;
+
+}
+<h1>Report - Repair</h1>
+
+<div class="btn-group mt-3">
+
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Get Reports
+    </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="/Report/ColorReport">Sales by Color</a>
+        <a class="dropdown-item" href="/Report/VehicleTypeReport">Sales by Vehicle Type</a>
+        <a class="dropdown-item" href="/Report/ManufacturerReport">Sales by Manufacturer</a>
+        <a class="dropdown-item" href="/Report/GrossCustomerIncomeReport">Gross Customer Income</a>
+        <a class="dropdown-item" href="/Report/RepairReport">Repair Reports</a>
+        <a class="dropdown-item" href="/Report/BelowCostSaleReport">Below Cost Sales</a>
+        <a class="dropdown-item" href="/Report/AverageInventoryTimeReport">View Average Inventory Time</a>
+        <a class="dropdown-item" href="/Report/PartReport">Parts Statistics</a>
+        <a class="dropdown-item" href="/Report/MonthlySaleReport">Monthly Sales</a>
+    </div>
+</div>
+
+<p style="line-height:1.5em;"></p>
+
+<a href="/Report/RepairReport" class="btn btn-primary btn-sm active" role="button" aria-pressed="true">Back to Repair by Manufacturer</a>
+
+<h1>Detail for @tempManufacturerName</h1>
+<h2>Vehicle Type</h2>
+
+<div id="" style="padding-top:5px">
+    <table id="tblrepairbytype" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>
+                    Vehicle Type
+                </th>
+                <th>
+                    Number of Repairs
+                </th>
+                <th>
+                    Parts Total Cost
+                </th>
+                <th>
+                    Labor Total Cost
+                </th>
+                <th>
+                    Repair Total
+                </th>
+            </tr>
+        </thead>
+        <tbody id="">
+
+
+            @foreach (var r in manufacturewithmodels)
+            {
+
+                <tr>
+                    <th>
+                        @*<a href="/Report/RepairModelReport?VehicleType=@r.vehicle_type&amp;@tempManufacturerName">*@
+
+                        @*<a href="@Url.Action("RepairModelReport","Report", new { @VehicleType = r.Key.vehicle_type, @tempManufacturerName = tempManufacturerName})">*@
+                            @r.Key.vehicle_type
+                        @*</a>*@
+
+                    </th>
+                    <td>
+                        @r.Key.repair_count
+                    </td>
+                    <td>
+                        @r.Key.total_parts_cost
+                    </td>
+                    <td>
+                        @r.Key.total_labor_charge
+                    </td>
+                    <td>
+                        @r.Key.total_repair_cost
+                    </td>
+
+                </tr>
+                 <tr>
+                     <td colspan="5">
+                         <table id="tblrepairbymodel" class="hover" style="width: 100%; font-size: 12px; background-color: aliceblue">
+                             <thead>
+                                 <tr>
+                                     <th>
+                                         Model Name
+                                     </th>
+                                     <th>
+                                         Number of Repairs
+                                     </th>
+                                     <th>
+                                         Parts Total Cost
+                                     </th>
+                                     <th>
+                                         Labor Total Cost
+                                     </th>
+                                     <th>
+                                         Repair Total
+                                     </th>
+                                 </tr>
+                             </thead>
+                             <tbody id="">
+
+
+                                 @foreach (var rr in r.Value)
+                                 {
+
+                                     <tr>
+                                         <th>
+                                             @rr.model_name
+                                         </th>
+                                         <td>
+                                             @rr.repair_count
+                                         </td>
+                                         <td>
+                                             @rr.total_parts_cost
+                                         </td>
+                                         <td>
+                                             @rr.total_labor_charge
+                                         </td>
+                                         <td>
+                                             @rr.total_repair_cost
+                                         </td>
+
+                                     </tr>
+
+                                 }
+
+
+
+
+                             </tbody>
+                         </table>
+
+
+                     </td>
+                </tr>
+
+            }
+
+
+
+
+        </tbody>
+    </table>
+
+</div>
+
