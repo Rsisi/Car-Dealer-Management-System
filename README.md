@@ -4,9 +4,9 @@ Built an auto dealership website supporting updating/searching inventory, tracki
 ## Project Structure
 Developed dealer backend following MVC design patter
 
-- *Models* folder as class constructors for controler folder
-- *View* folder contains all of the HTML pages for the supporting updating/searching inventory, tracking sales, and maintaining repair history functionalities
-- *Controller* folders contains all the c# implemntation for all of the functinality for checking reports, updating/searching inventory, tracking sales, and maintaining repair history
+- **Models** folder as class constructors for controler folder
+- **View** folder contains all of the HTML pages for the supporting updating/searching inventory, tracking sales, and maintaining repair history functionalities
+- **Controller** folders contains all the c# implemntation for all of the functinality for checking reports, updating/searching inventory, tracking sales, and maintaining repair history
 
 ## Project Details
 
@@ -46,8 +46,8 @@ Developed dealer backend following MVC design patter
 ### Add Vehicle 
  - Populate Manufacturer and Vehicle Type dropdowns
  - While no buttons are pushed, do nothing.
- - If *Back to Search*, go to Access Form
- - If *Add Vechicle*, go to the *Vechicle Detail Form*.
+ - If **Back to Search**, go to Access Form
+ - If **Add Vechicle**, go to the **Vechicle Detail Form**.
 
  ### Start New Repair Order
  - Search by VIN in Sales Transaction table
@@ -60,6 +60,6 @@ Developed dealer backend following MVC design patter
 
  ### Report Form
  - User login from the Login Form
- - Display *View Report* when the user's type id Manager or Owner.
+ - Display **View Report** when the user's type id Manager or Owner.
  - If User click view report dropdown list for Report Request, display dropdown list of selections detail for the user.
  - The selectioins include: Sales by Color Report, Sales by Type Report, Sales by Manufacturer Report, Gross Customer Income Report, Repairs by Manufacturers/Type/Model Report, Below Cost Sales Report, Average Time in Inventory Report, Parts Statics Report, Monthly Sales Report.
